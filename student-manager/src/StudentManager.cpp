@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <numeric>
 #include <iomanip>
+#include <direct.h>
 
 StudentManager::StudentManager(const std::string& filePath)
     : filePath(filePath), nextId(1) {
@@ -31,6 +32,13 @@ void StudentManager::loadFromFile() {
 }
 
 void StudentManager::saveToFile() {
+    // 确保文件所在目录存在
+    auto pos = filePath.find_last_of("/\\");
+    if (pos != std::string::npos) {
+        std::string dir = filePath.substr(0, pos);
+        _mkdir(dir.c_str());
+    }
+
     std::ofstream file(filePath);
     if (!file.is_open()) {
         std::cout << "Error: Cannot open file to save data!" << std::endl;
