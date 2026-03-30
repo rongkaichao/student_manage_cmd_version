@@ -53,8 +53,13 @@ Student Student::fromString(const std::string& line) {
     std::getline(iss, token, ',');
     age = std::stoi(token);
 
-    std::getline(iss, token, ',');
-    score = std::stod(token);
+    try{
+        std::getline(iss, token, ',');
+        score = std::stod(token);
+    }catch(std::exception& e){
+        std::cout << "out_of_range exception:" << e.what() << std::endl;
+    }
+    
 
     return Student(id, name, age, score);
 }

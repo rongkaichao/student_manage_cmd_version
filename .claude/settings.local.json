@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(g++ -o student_manager.exe src/main.cpp src/Student.cpp src/StudentManager.cpp -std=c++17)"
+      "Bash(g++ -o student_manager.exe src/main.cpp src/Student.cpp src/StudentManager.cpp -std=c++17)",
+      "Bash(powershell -Command \"Format-Hex 'C:\\\\Users\\\\rongkaichao\\\\newThings\\\\newProgram\\\\data\\\\students.txt' | Select-Object -First 3\")"
     ]
   }
 }

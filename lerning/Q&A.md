@@ -437,3 +437,42 @@
   2. 挑 addStudent() 这一个函数，对着需求文档读一遍代码
 
   不用贪多，一个功能吃透了，其他的自然就通了。
+
+# 工作目录的问题
+● 问题总结                  
+  现象                                   
+  - 终端运行程序：正常读取数据                                                                    
+  - VS Code debug 运行程序：显示 "No records."，文件读取失败原因   
+  launch.json 中配置了：
+
+  "cwd": "${fileDirname}"
+
+  ${fileDirname} 的值取决于你当前打开的源文件。比如打开 StudentManager.cpp 时，工作目录就是       
+  student-manager/src/。
+
+  而代码中使用的是相对路径：
+
+  StudentManager manager("data/students.txt");
+
+  相对路径是相对于工作目录的，所以程序在 student-manager/src/data/students.txt
+  找文件，文件不在那里，打开失败。
+
+  修复
+
+  "cwd": "${workspaceFolder}"
+
+  工作目录固定为项目根目录 newProgram，data/students.txt 就能正确找到。
+
+  要记住的一点
+
+  相对路径是相对于工作目录的，不是相对于 exe 所在目录的。 这是 Windows 和 C++ 中一个非常常见的坑。
+# terminate called after throwing an instance of 'std::out_of_range'what():stod
+那就确认了，6.9516e-310 这个值确实是 stod 报错的原因。
+
+  之前我说它在 double 范围内是错的。让我解释一下真正的原因：
+
+  std::stod 用的是 C 标准库的 strtod，它有精度下限。6.9516e-310 这个值太接近 0，超出了 strtod     
+  能安全解析的范围，虽然 double 理论上能表示到约 5e-324，但 strtod
+  的解析能力比这更保守，遇到这种极端小的值就会抛出 out_of_range。
+
+  简单说：double 能存这个值，但 stod 解析不了这个字符串。
