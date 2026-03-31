@@ -62,9 +62,20 @@ void StudentManager::addStudent() {
     std::cin >> name;
     std::cout << "Enter age: ";
     std::cin >> age;
+    while (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+        std::cout << "Invalid input, please enter a number!" << std::endl;
+        std::cin >> age;
+    }
     std::cout << "Enter score: ";
     std::cin >> score;
-
+    while (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+        std::cout << "Invalid input, please enter a number!" << std::endl;
+        std::cin >> score;
+    }
     if (age < 0 || age > 150) {
         std::cout << "Invalid age!" << std::endl;
         return;
