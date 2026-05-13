@@ -6,45 +6,55 @@
 #include <iomanip>
 #include <direct.h>
 
-StudentManager::StudentManager(const std::string& filePath)
-    : filePath(filePath), nextId(1) {
+StudentManager::StudentManager(const std::string &filePath)
+    : filePath(filePath), nextId(1)
+{
     loadFromFile();
 }
 
 // ===== File I/O =====
 
-void StudentManager::loadFromFile() {
+void StudentManager::loadFromFile()
+{
     std::ifstream file(filePath);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         return;
     }
 
     std::string line;
-    while (std::getline(file, line)) {
-        if (line.empty()) continue;
+    while (std::getline(file, line))
+    {
+        if (line.empty())
+            continue;
         Student s = Student::fromString(line);
         students.push_back(s);
-        if (s.getId() >= nextId) {
+        if (s.getId() >= nextId)
+        {
             nextId = s.getId() + 1;
         }
     }
     file.close();
 }
 
-void StudentManager::saveToFile() {
+void StudentManager::saveToFile()
+{
     // 确保文件所在目录存在
     auto pos = filePath.find_last_of("/\\");
-    if (pos != std::string::npos) {
+    if (pos != std::string::npos)
+    {
         std::string dir = filePath.substr(0, pos);
         _mkdir(dir.c_str());
     }
 
     std::ofstream file(filePath);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cout << "Error: Cannot open file to save data!" << std::endl;
         return;
     }
-    for (const auto& s : students) {
+    for (const auto &s : students)
+    {
         file << s.toString() << "\n";
     }
     file.close();
@@ -52,7 +62,8 @@ void StudentManager::saveToFile() {
 
 // ===== Core Functions =====
 
-void StudentManager::addStudent() {
+void StudentManager::addStudent()
+{
     std::string name;
     int age;
     double score;
@@ -62,7 +73,8 @@ void StudentManager::addStudent() {
     std::cin >> name;
     std::cout << "Enter age: ";
     std::cin >> age;
-    while (std::cin.fail()) {
+    while (std::cin.fail())
+    {
         std::cin.clear();
         std::cin.ignore(10000, '\n');
         std::cout << "Invalid input, please enter a number!" << std::endl;
@@ -70,17 +82,20 @@ void StudentManager::addStudent() {
     }
     std::cout << "Enter score: ";
     std::cin >> score;
-    while (std::cin.fail()) {
+    while (std::cin.fail())
+    {
         std::cin.clear();
         std::cin.ignore(10000, '\n');
         std::cout << "Invalid input, please enter a number!" << std::endl;
         std::cin >> score;
     }
-    if (age < 0 || age > 150) {
+    if (age < 0 || age > 150)
+    {
         std::cout << "Invalid age!" << std::endl;
         return;
     }
-    if (score < 0 || score > 100) {
+    if (score < 0 || score > 100)
+    {
         std::cout << "Score must be 0-100!" << std::endl;
         return;
     }
@@ -93,8 +108,10 @@ void StudentManager::addStudent() {
     s.display();
 }
 
-void StudentManager::deleteStudent() {
-    if (students.empty()) {
+void StudentManager::deleteStudent()
+{
+    if (students.empty())
+    {
         std::cout << "\nNo records." << std::endl;
         return;
     }
@@ -105,9 +122,11 @@ void StudentManager::deleteStudent() {
     std::cin >> id;
 
     auto it = std::find_if(students.begin(), students.end(),
-        [id](const Student& s) { return s.getId() == id; });
+                           [id](const Student &s)
+                           { return s.getId() == id; });
 
-    if (it == students.end()) {
+    if (it == students.end())
+    {
         std::cout << "Student with ID " << id << " not found." << std::endl;
         return;
     }
@@ -118,17 +137,22 @@ void StudentManager::deleteStudent() {
     char confirm;
     std::cin >> confirm;
 
-    if (confirm == 'y' || confirm == 'Y') {
+    if (confirm == 'y' || confirm == 'Y')
+    {
         students.erase(it);
         saveToFile();
         std::cout << "Deleted!" << std::endl;
-    } else {
+    }
+    else
+    {
         std::cout << "Cancelled." << std::endl;
     }
 }
 
-void StudentManager::modifyStudent() {
-    if (students.empty()) {
+void StudentManager::modifyStudent()
+{
+    if (students.empty())
+    {
         std::cout << "\nNo records." << std::endl;
         return;
     }
@@ -139,9 +163,11 @@ void StudentManager::modifyStudent() {
     std::cin >> id;
 
     auto it = std::find_if(students.begin(), students.end(),
-        [id](const Student& s) { return s.getId() == id; });
+                           [id](const Student &s)
+                           { return s.getId() == id; });
 
-    if (it == students.end()) {
+    if (it == students.end())
+    {
         std::cout << "Student with ID " << id << " not found." << std::endl;
         return;
     }
@@ -155,19 +181,22 @@ void StudentManager::modifyStudent() {
 
     std::cout << "New name (- to skip): ";
     std::cin >> name;
-    if (name != "-") {
+    if (name != "-")
+    {
         it->setName(name);
     }
 
     std::cout << "New age (-1 to skip): ";
     std::cin >> age;
-    if (age != -1) {
+    if (age != -1)
+    {
         it->setAge(age);
     }
 
     std::cout << "New score (-1 to skip): ";
     std::cin >> score;
-    if (score != -1) {
+    if (score != -1)
+    {
         it->setScore(score);
     }
 
@@ -176,8 +205,10 @@ void StudentManager::modifyStudent() {
     it->display();
 }
 
-void StudentManager::queryStudent() {
-    if (students.empty()) {
+void StudentManager::queryStudent()
+{
+    if (students.empty())
+    {
         std::cout << "\nNo records." << std::endl;
         return;
     }
@@ -189,41 +220,55 @@ void StudentManager::queryStudent() {
     int choice;
     std::cin >> choice;
 
-    if (choice == 1) {
+    if (choice == 1)
+    {
         int id;
         std::cout << "Enter ID: ";
         std::cin >> id;
 
         auto it = std::find_if(students.begin(), students.end(),
-            [id](const Student& s) { return s.getId() == id; });
+                               [id](const Student &s)
+                               { return s.getId() == id; });
 
-        if (it != students.end()) {
+        if (it != students.end())
+        {
             it->display();
-        } else {
+        }
+        else
+        {
             std::cout << "Not found." << std::endl;
         }
-    } else if (choice == 2) {
+    }
+    else if (choice == 2)
+    {
         std::string name;
         std::cout << "Enter name: ";
         std::cin >> name;
 
         bool found = false;
-        for (const auto& s : students) {
-            if (s.getName() == name) {
+        for (const auto &s : students)
+        {
+            if (s.getName() == name)
+            {
                 s.display();
                 found = true;
             }
         }
-        if (!found) {
+        if (!found)
+        {
             std::cout << "Not found." << std::endl;
         }
-    } else {
+    }
+    else
+    {
         std::cout << "Invalid choice." << std::endl;
     }
 }
 
-void StudentManager::displayAll() {
-    if (students.empty()) {
+void StudentManager::displayAll()
+{
+    if (students.empty())
+    {
         std::cout << "\nNo records." << std::endl;
         return;
     }
@@ -237,7 +282,8 @@ void StudentManager::displayAll() {
               << std::endl;
     std::cout << "--------------------------------" << std::endl;
 
-    for (const auto& s : students) {
+    for (const auto &s : students)
+    {
         std::cout << std::left
                   << std::setw(8) << s.getId()
                   << std::setw(12) << s.getName()
@@ -247,8 +293,10 @@ void StudentManager::displayAll() {
     }
 }
 
-void StudentManager::showStatistics() {
-    if (students.empty()) {
+void StudentManager::showStatistics()
+{
+    if (students.empty())
+    {
         std::cout << "\nNo records." << std::endl;
         return;
     }
@@ -260,12 +308,22 @@ void StudentManager::showStatistics() {
     std::string minName = students[0].getName();
     int passCount = 0;
 
-    for (const auto& s : students) {
+    for (const auto &s : students)
+    {
         double sc = s.getScore();
         total += sc;
-        if (sc > maxScore) { maxScore = sc; maxName = s.getName(); }
-        if (sc < minScore) { minScore = sc; minName = s.getName(); }
-        if (sc >= 60) passCount++;
+        if (sc > maxScore)
+        {
+            maxScore = sc;
+            maxName = s.getName();
+        }
+        if (sc < minScore)
+        {
+            minScore = sc;
+            minName = s.getName();
+        }
+        if (sc >= 60)
+            passCount++;
     }
 
     double avg = total / students.size();
@@ -278,3 +336,122 @@ void StudentManager::showStatistics() {
     std::cout << "Pass rate:      " << std::fixed << std::setprecision(1)
               << (passCount * 100.0 / students.size()) << "%" << std::endl;
 }
+
+bool StudentManager::addStudent(const std::string &name, int age, double score)
+{
+    if (age < 0 || age > 150)
+        return false;
+    if (score < 0 || score > 100)
+        return false;
+
+    Student s(nextId++, name, age, score);
+    students.push_back(s);
+    saveToFile();
+    return true;
+}
+
+int StudentManager::getStudentCount() const
+{
+    return static_cast<int>(students.size());
+}
+
+const Student &StudentManager::getStudent(int index) const
+{
+    return students.at(index);
+}
+
+int StudentManager::findIndexById(int id) const
+{
+    for (int i = 0; i < static_cast<int>(students.size()); i++)
+    {
+        if (students[i].getId() == id)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+std::vector<int> StudentManager::findIndexesByName(const std::string &name) const
+{
+    std::vector<int> indices;
+    for (int i = 0; i < static_cast<int>(students.size()); i++)
+    {
+        if (students[i].getName() == name)
+        {
+            indices.push_back(i);
+        }
+    }
+    return indices;
+}
+
+bool StudentManager::removeStudentById(int id)
+{
+    int idx = findIndexById(id);
+    if (idx == -1)
+        return false;
+    students.erase(students.begin() + idx);
+    saveToFile();
+    return true;
+}
+
+bool StudentManager::updateStudent(int id, const std::string &name, int age, double score)
+{
+    int idx = findIndexById(id);
+    if (idx == -1)
+        return false;
+
+    if (name != "-")
+    {
+        students[idx].setName(name);
+    }
+    if (age != -1)
+    {
+        students[idx].setAge(age);
+    }
+    if (score != -1)
+    {
+        students[idx].setScore(score);
+    }
+
+    saveToFile();
+    return true;
+}
+
+double StudentManager::getAverageScore() const {
+      if (students.empty()) return 0.0;
+      double total = 0;
+      for (const auto& s : students) {
+          total += s.getScore();
+      }
+      return total / students.size();
+  }
+
+  double StudentManager::getMaxScore() const {
+      if (students.empty()) return 0.0;
+      double max = students[0].getScore();
+      for (const auto& s : students) {
+          if (s.getScore() > max) max = s.getScore();
+      }
+      return max;
+  }
+
+  double StudentManager::getMinScore() const {
+      if (students.empty()) return 0.0;
+      double min = students[0].getScore();
+      for (const auto& s : students) {
+          if (s.getScore() < min) min = s.getScore();
+      }
+      return min;
+  }
+
+  int StudentManager::getPassRate() const {
+      if (students.empty()) return 0;
+      int passCount = 0;
+      for (const auto& s : students) {
+          if (s.getScore() >= 60) passCount++;
+      }
+      return static_cast<int>(passCount * 100.0 / students.size());
+  }
+
+

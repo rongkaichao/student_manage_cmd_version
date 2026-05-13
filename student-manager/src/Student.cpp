@@ -5,7 +5,7 @@
 Student::Student() : id(0), name(""), age(0), score(0.0) {}
 
 // 带参构造函数
-Student::Student(int id, const std::string& name, int age, double score)
+Student::Student(int id, const std::string &name, int age, double score)
     : id(id), name(name), age(age), score(score) {}
 
 // getter
@@ -15,12 +15,13 @@ int Student::getAge() const { return age; }
 double Student::getScore() const { return score; }
 
 // setter
-void Student::setName(const std::string& name) { this->name = name; }
+void Student::setName(const std::string &name) { this->name = name; }
 void Student::setAge(int age) { this->age = age; }
 void Student::setScore(double score) { this->score = score; }
 
 // 显示学生信息
-void Student::display() const {
+void Student::display() const
+{
     std::cout << "ID: " << id
               << "  Name: " << name
               << "  Age: " << age
@@ -30,36 +31,39 @@ void Student::display() const {
 
 // 转成字符串（用逗号分隔，方便存文件）
 // 格式: id,name,age,score
-std::string Student::toString() const {
+std::string Student::toString() const
+{
     std::ostringstream oss;
     oss << id << "," << name << "," << age << "," << score;
     return oss.str();
 }
 
 // 从字符串解析出 Student 对象
-Student Student::fromString(const std::string& line) {
+Student Student::fromString(const std::string &line)
+{
     std::istringstream iss(line);
     std::string token;
-    int id, age;
+    int id = 0, age = 0;
     std::string name;
-    double score;
+    double score = 0.0;
 
-    // 按逗号分割
-    std::getline(iss, token, ',');
-    id = std::stoi(token);
+    try
+    {
+        std::getline(iss, token, ',');
+        id = std::stoi(token);
 
-    std::getline(iss, name, ',');
+        std::getline(iss, name, ',');
 
-    std::getline(iss, token, ',');
-    age = std::stoi(token);
+        std::getline(iss, token, ',');
+        age = std::stoi(token);
 
-    try{
         std::getline(iss, token, ',');
         score = std::stod(token);
-    }catch(std::exception& e){
-        std::cout << "out_of_range exception:" << e.what() << std::endl;
     }
-    
+    catch (...)
+    {
+        return Student();
+    }
 
     return Student(id, name, age, score);
 }
